@@ -1,0 +1,25 @@
+apiVersion: v2
+name: superset
+description: Apache Superset is a modern data exploration and visualization platform
+type: application
+version: 0.1.0
+appVersion: "2.1.0"
+keywords:
+  - analytics
+  - business intelligence
+  - visualization
+home: https://superset.apache.org/
+sources:
+  - https://github.com/apache/superset
+maintainers:
+  - name: your-name
+    email: your-email@example.com
+dependencies:
+  - name: postgresql
+    version: ~12.5.5
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+  - name: redis
+    version: ~17.11.3
+    repository: https://charts.bitnami.com/bitnami
+    condition: redis.enabled
