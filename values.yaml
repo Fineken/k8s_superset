@@ -118,19 +118,17 @@ superset:
     mapbox_api_key: ""
     secret_key: "YOUR_OWN_RANDOM_GENERATED_SECRET_KEY"
   
-  initImage:
-    repository: apache/superset
-    tag: "2.1.0"
-    pullPolicy: IfNotPresent
-
   init:
+    enabled: true
+    loadExamples: true
     adminUser:
       username: admin
       firstname: Superset
       lastname: Admin
       email: admin@superset.com
       password: admin
-
+    timeout: 300
+    
   # Worker настройки
   worker:
     enabled: true
@@ -153,13 +151,6 @@ superset:
       requests:
         cpu: "250m"
         memory: "512Mi"
-
-  # Init job для инициализации базы данных
-  init:
-    enabled: true
-    loadExamples: true
-    createAdmin: true
-    timeout: 300
 
 postgresql:
   enabled: true
