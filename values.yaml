@@ -55,7 +55,6 @@ service:
   type: NodePort
   # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
   port: 8088
-  nodePort: 30088
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
@@ -133,14 +132,20 @@ superset:
 
 postgresql:
   enabled: true
+  image:
+    repository: postgres
+    tag: "13"
   postgresqlUsername: superset
   postgresqlPassword: superset
   postgresqlDatabase: superset
   service:
-    port: "5432"
+    port: 5432
 
 redis:
   enabled: true
+  image:
+    repository: redis
+    tag: "6"
   architecture: standalone
   auth:
     enabled: true
