@@ -30,7 +30,18 @@ spec:
       initContainers:
         - name: init-db
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          command: ["superset-init"]
+          command: 
+            - "/bin/sh"
+            - "-c"
+            - |
+              superset db upgrade && 
+              superset init && 
+              superset fab create-admin \
+                --username $SUPERSET_USERNAME \
+                --firstname $SUPERSET_FIRSTNAME \
+                --lastname $SUPERSET_LASTNAME \
+                --email $SUPERSET_EMAIL \
+                --password $SUPERSET_PASSWORD
           env:
             - name: SUPERSET_USERNAME
               valueFrom:
@@ -57,12 +68,31 @@ spec:
                 secretKeyRef:
                   name: {{ include "superset.fullname" . }}-secrets
                   key: admin_lastname
+            - name: SUPERSET_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "superset.fullname" . }}-secrets
+                  key: secret_key
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "superset.fullname" . }}-secrets
+                  key: postgres_user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "superset.fullname" . }}-secrets
+                  key: postgres_password
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - "/bin/sh"
+            - "-c"
+            - "superset run -p 8088 --with-threads --reload --host=0.0.0.0"
           ports:
             - name: http
               containerPort: 8088
