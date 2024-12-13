@@ -129,7 +129,37 @@ superset:
       firstname: Superset
       lastname: Admin
       email: admin@superset.com
-      password: NxWJDiQIYUONDTqE
+      password: admin
+
+  # Worker настройки
+  worker:
+    enabled: true
+    replicaCount: 1
+    resources:
+      limits:
+        cpu: "1000m"
+        memory: "2Gi"
+      requests:
+        cpu: "500m"
+        memory: "1Gi"
+
+  # Beat настройки для периодических задач
+  beat:
+    enabled: true
+    resources:
+      limits:
+        cpu: "500m"
+        memory: "1Gi"
+      requests:
+        cpu: "250m"
+        memory: "512Mi"
+
+  # Init job для инициализации базы данных
+  init:
+    enabled: true
+    loadExamples: true
+    createAdmin: true
+    timeout: 300
 
 postgresql:
   enabled: true
@@ -159,6 +189,37 @@ redis:
   persistence:
     enabled: true
     size: 8Gi
+
+# Настройки доступа
+service:
+  type: NodePort
+  port: 8088
+  nodePort: 30088
+
+# Ресурсы для основного приложения
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+
+# Настройки для celery (очередь задач)
+celery:
+  enabled: true
+  workers: 2
+  resources:
+    limits:
+      cpu: "1000m"
+      memory: "2Gi"
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+
+# Отключаем vault
+vault:
+  enabled: false
 
 # vault:
 #   enabled: true
