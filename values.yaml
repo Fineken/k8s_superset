@@ -52,9 +52,10 @@ securityContext: {}
 # This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
 service:
   # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
-  type: ClusterIP
+  type: NodePort
   # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
   port: 8088
+  nodePort: 30088
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
@@ -64,7 +65,7 @@ ingress:
     kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: superset.local
+    - host: "10.77.198.171.nip.io"
       paths:
         - path: /
           pathType: ImplementationSpecific
@@ -128,7 +129,7 @@ superset:
       firstname: Superset
       lastname: Admin
       email: admin@superset.com
-      password: admin
+      password: NxWJDiQIYUONDTqE
 
 postgresql:
   enabled: true
@@ -145,18 +146,18 @@ redis:
     enabled: true
     password: superset
 
-vault:
-  enabled: true
-  addr: "http://vault:8200"
-  secretPath: "secret/data/superset"
-  role: "superset"
-  authPath: "auth/kubernetes"
+# vault:
+#   enabled: true
+#   addr: "http://vault:8200"
+#   secretPath: "secret/data/superset"
+#   role: "superset"
+#   authPath: "auth/kubernetes"
 
 
-jenkinsEnvironment:
-  VAULT_ADDR: "http://vault:8200"
-  VAULT_SECRET_PATH: "secret/data/superset"
-  VAULT_ROLE: "superset"
-  VAULT_AUTH_PATH: "auth/kubernetes"
-  K8S_NAMESPACE: "superset"
-  SERVICE_ACCOUNT: "superset"
+# jenkinsEnvironment:
+#   VAULT_ADDR: "http://vault:8200"
+#   VAULT_SECRET_PATH: "secret/data/superset"
+#   VAULT_ROLE: "superset"
+#   VAULT_AUTH_PATH: "auth/kubernetes"
+#   K8S_NAMESPACE: "superset"
+#   SERVICE_ACCOUNT: "superset"
