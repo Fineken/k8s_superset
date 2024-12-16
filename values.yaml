@@ -85,11 +85,11 @@ resources:
 #
 livenessProbe:
   httpGet:
-    path: /
+    path: /health
     port: http
 readinessProbe:
   httpGet:
-    path: /
+    path: /health
     port: http
 
 
@@ -117,6 +117,20 @@ superset:
     enable_proxy_fix: true
     mapbox_api_key: ""
     secret_key: "YOUR_OWN_RANDOM_GENERATED_SECRET_KEY"
+    # Настройки подключения к базе данных
+    SQLALCHEMY_DATABASE_URI: "postgresql+psycopg2://superset:superset@my-superset-postgresql:5432/superset"
+    # Настройки Redis и Celery
+    CELERY_BROKER_URL: "redis://:superset@my-superset-redis:6379/0"
+    CELERY_RESULT_BACKEND: "redis://:superset@my-superset-redis:6379/1"
+    # Настройки кэша
+    CACHE_CONFIG:
+      CACHE_TYPE: "redis"
+      CACHE_DEFAULT_TIMEOUT: 300
+      CACHE_KEY_PREFIX: "superset_results"
+      CACHE_REDIS_HOST: "my-superset-redis"
+      CACHE_REDIS_PORT: 6379
+      CACHE_REDIS_PASSWORD: "superset"
+      CACHE_REDIS_DB: 2
   
   init:
     enabled: true
