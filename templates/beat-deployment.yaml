@@ -21,7 +21,7 @@ spec:
         - name: {{ .Chart.Name }}-beat
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["celery", "beat", "--app=superset.tasks.celery_app:app"]
+          command: ["celery", "--app", "superset.tasks.celery_app:app", "beat"]
           env:
             - name: SUPERSET_SECRET_KEY
               valueFrom:
