@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "superset.fullname" . }}-worker
+  labels:
+    {{- include "superset.labels" . | nindent 4 }}
+    component: worker
+spec:
+  replicas: {{ .Values.superset.worker.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "superset.selectorLabels" . | nindent 6 }}
+      component: worker
+  template:
+    metadata:
+      labels:
+        {{- include "superset.selectorLabels" . | nindent 8 }}
+        component: worker
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-worker
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["celery", "worker", "--app=superset.tasks.celery_app:app", "--pool=prefork", "-O=fair", "-c", "4"]
+          env:
+            - name: SUPERSET_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "superset.fullname" . }}-secrets
+                  key: secret_key
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "superset.fullname" . }}-secrets
+                  key: postgres_user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "superset.fullname" . }}-secrets
+                  key: postgres_password
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "superset.fullname" . }}-secrets
+                  key: redis_password
+          resources:
+            {{- toYaml .Values.superset.worker.resources | nindent 12 }} 

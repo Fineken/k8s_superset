@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "superset.fullname" . }}-beat
+  labels:
+    {{- include "superset.labels" . | nindent 4 }}
+    component: beat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "superset.selectorLabels" . | nindent 6 }}
+      component: beat
+  template:
+    metadata:
+      labels:
+        {{- include "superset.selectorLabels" . | nindent 8 }}
+        component: beat
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-beat
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["celery", "beat", "--app=superset.tasks.celery_app:app"]
+          env:
+            - name: SUPERSET_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "superset.fullname" . }}-secrets
+                  key: secret_key
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "superset.fullname" . }}-secrets
+                  key: postgres_user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "superset.fullname" . }}-secrets
+                  key: postgres_password
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "superset.fullname" . }}-secrets
+                  key: redis_password
+          resources:
+            {{- toYaml .Values.superset.beat.resources | nindent 12 }} 
